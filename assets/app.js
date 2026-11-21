@@ -5,6 +5,7 @@
   let menu = [];
   let categories = [];
   let currentCategory = 'all';
+  let menuRenderTimer = 0;
   let shop = {lat:14.5995,lng:120.9842,rate:15};
   let map;
   let marker;
@@ -43,14 +44,24 @@
   function renderMenu() {
     const query=$('#menu-search').value.trim().toLocaleLowerCase();
     const filtered = menu.filter(item=>(currentCategory==='all'||Number(item.category_id)===Number(currentCategory))&&(!query||`${item.name} ${item.description||''} ${item.category_name||''}`.toLocaleLowerCase().includes(query)));
-    $('#menu-grid').innerHTML = filtered.length ? filtered.map(item => `<div class="col-sm-6 col-lg-4"><article class="meal-card"><img class="meal-image" src="${escapeHtml(item.image_url || defaultImage(item.name))}" alt="${escapeHtml(item.name)}"><div class="meal-card-body"><span class="meal-category">${escapeHtml(item.category_name)}</span><h3 class="meal-title">${escapeHtml(item.name)}</h3><p class="meal-desc">${escapeHtml(item.description || 'Freshly cooked and made just for you.')}</p><div class="d-flex justify-content-between align-items-center"><span class="meal-price">${peso(item.price)}</span>${Number(item.is_featured) ? '<span class="badge text-bg-warning">Popular</span>' : ''}</div><div class="meal-actions"><button class="btn btn-warm btn-sm" data-add="${item.id}">Add to cart</button><button class="btn btn-outline-success btn-sm" data-customize="${item.id}">Customize</button></div></div></article></div>`).join('') : '<div class="col-12 text-center py-5">No meals in this category yet.</div>';
+    const grid=$('#menu-grid');
+    const update=()=>{grid.innerHTML = filtered.length ? filtered.map(item => `<div class="col-sm-6 col-lg-4" data-reveal><article class="meal-card"><img class="meal-image" src="${escapeHtml(item.image_url || defaultImage(item.name))}" alt="${escapeHtml(item.name)}"><div class="meal-card-body"><span class="meal-category">${escapeHtml(item.category_name)}</span><h3 class="meal-title">${escapeHtml(item.name)}</h3><p class="meal-desc">${escapeHtml(item.description || 'Freshly cooked and made just for you.')}</p><div class="d-flex justify-content-between align-items-center"><span class="meal-price">${peso(item.price)}</span>${Number(item.is_featured) ? '<span class="badge text-bg-warning">Popular</span>' : ''}</div><div class="meal-actions"><button class="btn btn-warm btn-sm" data-add="${item.id}">Add to cart</button><button class="btn btn-outline-success btn-sm" data-customize="${item.id}">Customize</button></div></article></div>`).join('') : '<div class="col-12 text-center py-5">No meals in this category yet.</div>';};
+    window.clearTimeout(menuRenderTimer);
+    if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){grid.classList.remove('is-filtering');update();return;}
+    grid.classList.add('is-filtering');
+    menuRenderTimer=window.setTimeout(()=>{update();grid.classList.remove('is-filtering');},110);
+  }
+  function renderFeatured() {
+    const featured=menu.filter(item=>Number(item.is_featured)).slice(0,3);
+    const items=(featured.length?featured:menu.slice(0,3));
+    $('#featured-menu-grid').innerHTML=items.map((item,index)=>`<div class="col-md-6 col-lg-4" data-reveal><article class="featured-card"><div class="featured-card__image"><img src="${escapeHtml(item.image_url || defaultImage(item.name))}" alt="${escapeHtml(item.name)}" loading="lazy"><span>${String(index+1).padStart(2,'0')} / ${['SIGNATURE','BEST SELLER','COMFORT CLASSIC'][index]}</span></div><div class="featured-card__body"><div class="featured-card__meta"><span>${escapeHtml(item.category_name)}</span><strong>${peso(item.price)}</strong></div><h3>${escapeHtml(item.name)}</h3><p>${escapeHtml(item.description || 'Freshly cooked and made just for you.')}</p><div class="featured-card__pills"><span>Made fresh</span><span>Filipino favorite</span></div><button class="btn btn-warm btn-sm mt-3" data-add="${item.id}">Add to cart <span aria-hidden="true">→</span></button></div></article></div>`).join('');
   }
   function defaultImage(name) {
     const images = {'Chicken Inasal Rice':'photo-1512058564366-18510be2db19','Pork Adobo Rice':'photo-1547592180-85f173990554','Beef Tapa Rice':'photo-1512621776951-a57141f2eefd','Crispy Chicken Combo':'photo-1562967914-608f82629710','Extra Garlic Rice':'photo-1516684732162-798a0062be99','Fried Egg':'photo-1525351484163-7529414344d8'};
     return `https://images.unsplash.com/${images[name] || images['Chicken Inasal Rice']}?auto=format&fit=crop&w=800&q=80`;
   }
   function renderCategories() {
-    $('#category-filters').innerHTML = `<button class="btn btn-sm btn-outline-success active" data-category="all">Everything</button>` + categories.map(c => `<button class="btn btn-sm btn-outline-success" data-category="${c.id}">${escapeHtml(c.name)}</button>`).join('');
+    $('#category-filters').innerHTML = `<button class="btn btn-sm btn-outline-success active" data-category="all" aria-pressed="true">Everything</button>` + categories.map(c => `<button class="btn btn-sm btn-outline-success" data-category="${c.id}" aria-pressed="false">${escapeHtml(c.name)}</button>`).join('');
   }
   function addToCart(id, options = {}) {
     const item = menu.find(entry => Number(entry.id) === Number(id));
@@ -256,7 +267,7 @@
       const response=await fetch(`${api}?action=bootstrap`);
       const data=await handleResponse(response);
       csrf=data.csrf;user=data.user;menu=data.menu;categories=data.categories;shop=data.shop||shop;
-      renderCategories();renderMenu();persistCart();renderManualItems();
+      renderCategories();renderMenu();renderFeatured();persistCart();renderManualItems();
       if (user) {
         $('#dashboard-link')?.classList.remove('d-none');
         await refreshDashboard();
@@ -272,7 +283,7 @@
     const customize=event.target.closest('[data-customize]');
     if(customize){const spice=prompt('Spice preference? Mild, medium, or spicy?','medium');if(spice!==null)addToCart(customize.dataset.customize,{spice:spice.slice(0,40)});return;}
     const category=event.target.closest('[data-category]');
-    if(category){currentCategory=category.dataset.category;$$('[data-category]').forEach(button=>button.classList.toggle('active',button===category));renderMenu();return;}
+    if(category){currentCategory=category.dataset.category;$$('[data-category]').forEach(button=>{const active=button===category;button.classList.toggle('active',active);button.setAttribute('aria-pressed',String(active));});renderMenu();return;}
     const qty=event.target.closest('[data-qty]');
     if(qty){const index=Number(qty.dataset.qty);cart[index].quantity+=Number(qty.dataset.delta);if(cart[index].quantity<=0)cart.splice(index,1);persistCart();return;}
     const remove=event.target.closest('[data-remove]');

@@ -9,13 +9,19 @@ $user = current_user();
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#183c2b">
   <title>Rice Mo’To — Rice meals made to move you</title>
+  <link rel="stylesheet" href="assets/css/preloader.css">
+  <script>document.documentElement.classList.add('rice-preloader-enabled');</script>
+  <script src="assets/js/preloader.js" defer></script>
   <script>tailwind = {config: {corePlugins: {preflight: false}}};</script>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
   <link rel="stylesheet" href="assets/app.css">
+  <link rel="stylesheet" href="assets/css/animations.css">
 </head>
 <body>
+<?php require __DIR__ . '/includes/preloader.php'; ?>
+<div id="main-content">
 <nav class="navbar navbar-expand-md navbar-dark site-nav sticky-top">
   <div class="container position-relative">
     <a class="navbar-brand fw-bold d-flex align-items-center gap-2" href="#"><span class="brand-mark">R</span> Rice Mo’To</a>
@@ -44,14 +50,14 @@ $user = current_user();
     <div class="container py-5 py-lg-6">
       <div class="row align-items-center g-5">
         <div class="col-lg-6">
-          <div class="eyebrow"><span class="status-dot"></span> HOT RICE MEALS · MADE FRESH</div>
-          <h1 class="hero-title mt-3">Big comfort.<br><span>Fast delivery.</span></h1>
-          <p class="hero-copy mt-3">Your favorite Filipino rice meals, cooked fresh and delivered hot. Order for delivery or takeout, then follow every step from kitchen to your door.</p>
-          <div class="d-flex flex-wrap gap-3 mt-4"><a class="btn btn-warm btn-lg" href="#menu">Order now <span aria-hidden="true">→</span></a><a class="btn btn-outline-dark btn-lg" href="#how">How it works</a></div>
-          <div class="hero-proof mt-4"><span>★★★★★</span> Freshly cooked, locally loved <i></i> Real-time order updates</div>
+          <div class="eyebrow" data-reveal><span class="status-dot"></span> HOT RICE MEALS · MADE FRESH</div>
+          <h1 class="hero-title mt-3" data-reveal>Big comfort.<br><span>Fast delivery.</span></h1>
+          <p class="hero-copy mt-3" data-reveal>Your favorite Filipino rice meals, cooked fresh and delivered hot. Order for delivery or takeout, then follow every step from kitchen to your door.</p>
+          <div class="d-flex flex-wrap gap-3 mt-4" data-reveal><a class="btn btn-warm btn-lg" href="#menu">Order now <span aria-hidden="true">→</span></a><a class="btn btn-outline-dark btn-lg" href="#how">How it works</a></div>
+          <div class="hero-proof mt-4" data-reveal><span>★★★★★</span> Freshly cooked, locally loved <i></i> Real-time order updates</div>
         </div>
-        <div class="col-lg-6"><div class="hero-image-card">
-          <img src="https://images.unsplash.com/photo-1512058564366-18510be2db19?auto=format&fit=crop&w=1100&q=85" alt="A freshly prepared rice meal with grilled chicken">
+        <div class="col-lg-6"><div class="hero-image-card" data-reveal="fade-left">
+          <img data-parallax src="https://images.unsplash.com/photo-1512058564366-18510be2db19?auto=format&fit=crop&w=1100&q=85" alt="A freshly prepared rice meal with grilled chicken">
           <div class="floating-note"><span class="note-icon">♨</span><div><strong>Hot off the kitchen</strong><small>Made fresh when you order</small></div></div>
           <div class="hero-sticker">RICE<br><b>MO’TO</b><small>GOOD FOOD. GOOD MOOD.</small></div>
         </div></div>
@@ -59,26 +65,43 @@ $user = current_user();
     </div>
   </section>
 
-  <section class="trust-strip"><div class="container"><div class="row g-3 text-center"><div class="col-4"><strong>Fresh</strong><small>Made to order</small></div><div class="col-4"><strong>Fast</strong><small>Kitchen-to-door tracking</small></div><div class="col-4"><strong>Easy</strong><small>Delivery or takeout</small></div></div></div></section>
+  <section class="trust-strip"><div class="container"><div class="row g-3 text-center" data-reveal-stagger><div class="col-4" data-reveal><strong>Fresh</strong><small>Made to order</small></div><div class="col-4" data-reveal><strong>Fast</strong><small>Kitchen-to-door tracking</small></div><div class="col-4" data-reveal><strong>Easy</strong><small>Delivery or takeout</small></div></div></div></section>
 
-  <section class="section-pad" id="menu"><div class="container">
-    <div class="section-heading d-flex flex-wrap align-items-end justify-content-between gap-3"><div><div class="eyebrow">THE GOOD STUFF</div><h2>Meals worth <span>coming back for.</span></h2><p>Real ingredients, generous portions, and all the rice you’re craving.</p></div><div class="d-flex flex-column align-items-lg-end gap-2"><input class="form-control menu-search" id="menu-search" type="search" placeholder="Search meals…" aria-label="Search meals"><div class="menu-filters d-flex flex-wrap gap-2" id="category-filters"></div></div></div>
-    <div class="row g-4 mt-2" id="menu-grid"><div class="col-12 text-center py-5 text-muted">Loading the menu…</div></div>
+  <section class="rice-ribbon" aria-label="Rice Mo’To favorites">
+    <div class="rice-ribbon__track">
+      <div class="rice-ribbon__group"><span>Sisig Rice</span><i>✳</i><span>Adobo Bowl</span><i>✳</i><span>Garlic Rice</span><i>✳</i><span>Longsilog</span><i>✳</i><span>Fast Delivery</span><i>✳</i></div>
+      <div class="rice-ribbon__group" aria-hidden="true"><span>Sisig Rice</span><i>✳</i><span>Adobo Bowl</span><i>✳</i><span>Garlic Rice</span><i>✳</i><span>Longsilog</span><i>✳</i><span>Fast Delivery</span><i>✳</i></div>
+    </div>
+  </section>
+
+  <section class="feature-section section-pad" id="featured" aria-labelledby="featured-title"><div class="container">
+    <div class="section-heading feature-heading" data-reveal><div><div class="eyebrow">A FEW HOUSE FAVORITES</div><h2 id="featured-title">Made fresh.<br><span>Remembered fondly.</span></h2></div><p>Comforting Filipino flavors, generous portions, and little details worth slowing down for.</p></div>
+    <div class="row g-4 mt-2 featured-grid" id="featured-menu-grid" data-reveal-stagger aria-live="polite"></div>
   </div></section>
 
-  <section class="how-section section-pad" id="how"><div class="container">
-    <div class="text-center section-heading"><div class="eyebrow">GOOD FOOD, NO GUESSWORK</div><h2>From craving to <span>“that was so good.”</span></h2><p>Easy ordering with updates all the way through.</p></div>
-    <div class="row g-4 mt-3">
-      <div class="col-md-6 col-lg-3"><article class="step-card"><div class="step-number">01</div><div class="step-icon">🍚</div><h3>Browse & customize</h3><p>Pick a rice meal, add your extras, and tell our kitchen how you like it.</p></article></div>
-      <div class="col-md-6 col-lg-3"><article class="step-card"><div class="step-number">02</div><div class="step-icon">📍</div><h3>Choose your handoff</h3><p>Pin your delivery spot or choose a quick pickup at the store.</p></article></div>
-      <div class="col-md-6 col-lg-3"><article class="step-card"><div class="step-number">03</div><div class="step-icon">🛵</div><h3>Follow every update</h3><p>See when we’re cooking, packing, and bringing your order your way.</p></article></div>
-      <div class="col-md-6 col-lg-3"><article class="step-card"><div class="step-number">04</div><div class="step-icon">😋</div><h3>Dig in, happily</h3><p>Get comfy. Your fresh Rice Mo’To meal is nearly there.</p></article></div>
+  <section class="story-section section-pad"><div class="container"><div class="row align-items-center g-5">
+    <div class="col-lg-6"><div class="story-image" data-reveal="fade-left"><img data-parallax src="https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=1000&q=85" alt="A comforting Filipino-inspired rice meal served fresh"><span class="story-image__note">GOOD FOOD, GOOD MOOD</span></div></div>
+    <div class="col-lg-6"><div class="story-copy" data-reveal><div class="eyebrow">A LITTLE MORE JOY IN EVERY BITE</div><h2>Comfort food,<br><span>made with care.</span></h2><p>From the first scoop of garlic rice to the last bite, every order is prepared fresh and packed for your kind of day.</p><div class="story-pills"><span>Cooked to order</span><span>Filipino favorites</span><span>Delivery or takeout</span></div><a class="btn btn-warm mt-4" href="#menu">Find your favorite <span aria-hidden="true">→</span></a></div></div>
+  </div></div></section>
+
+  <section class="section-pad menu-section" id="menu"><div class="container">
+    <div class="section-heading d-flex flex-wrap align-items-end justify-content-between gap-3" data-reveal><div><div class="eyebrow">THE GOOD STUFF</div><h2>Meals worth <span>coming back for.</span></h2><p>Real ingredients, generous portions, and all the rice you’re craving.</p></div><div class="d-flex flex-column align-items-lg-end gap-2"><input class="form-control menu-search" id="menu-search" type="search" placeholder="Search meals…" aria-label="Search meals"><div class="menu-filters d-flex flex-wrap gap-2" id="category-filters"></div></div></div>
+    <div class="row g-4 mt-2" id="menu-grid" data-reveal-stagger><div class="col-12 text-center py-5 text-muted">Loading the menu…</div></div>
+  </div></section>
+
+  <section class="how-section section-pad" id="how"><div class="container" id="how-it-works">
+    <div class="text-center section-heading" data-reveal><div class="eyebrow">GOOD FOOD, NO GUESSWORK</div><h2>From craving to <span>“that was so good.”</span></h2><p>Easy ordering with updates all the way through.</p></div>
+    <div class="row g-4 mt-3" data-reveal-stagger>
+      <div class="col-md-6 col-lg-3"><article class="step-card" data-reveal><div class="step-number">01</div><div class="step-icon">🍚</div><h3>Browse & customize</h3><p>Pick a rice meal, add your extras, and tell our kitchen how you like it.</p></article></div>
+      <div class="col-md-6 col-lg-3"><article class="step-card" data-reveal><div class="step-number">02</div><div class="step-icon">📍</div><h3>Choose your handoff</h3><p>Pin your delivery spot or choose a quick pickup at the store.</p></article></div>
+      <div class="col-md-6 col-lg-3"><article class="step-card" data-reveal><div class="step-number">03</div><div class="step-icon">🛵</div><h3>Follow every update</h3><p>See when we’re cooking, packing, and bringing your order your way.</p></article></div>
+      <div class="col-md-6 col-lg-3"><article class="step-card" data-reveal><div class="step-number">04</div><div class="step-icon">😋</div><h3>Dig in, happily</h3><p>Get comfy. Your fresh Rice Mo’To meal is nearly there.</p></article></div>
     </div>
   </div></section>
 
-  <section class="section-pad" id="track"><div class="container"><div class="row g-4 align-items-stretch">
-    <div class="col-lg-7"><div class="track-card h-100"><div class="eyebrow">NO “WHERE’S MY FOOD?” MOMENTS</div><h2>Know where your order is.</h2><p>Enter your order ID to see the latest kitchen or rider update.</p><form class="input-group track-form" id="track-form"><input class="form-control" id="track-id" placeholder="e.g. RM-A1B2C3D4" maxlength="24" required><button class="btn btn-warm" type="submit">Track order</button></form><div class="track-result mt-3" id="track-result" aria-live="polite"></div></div></div>
-    <div class="col-lg-5"><div class="store-card h-100"><div class="eyebrow">COME SAY HI</div><h3>Your local rice stop.</h3><p>Freshly cooked Filipino favorites, ready for pickup or delivery around Manila.</p><div class="store-detail"><span>⌖</span><div><strong>Manila, Philippines</strong><small>Rice Mo’To Kitchen</small></div></div><div class="store-detail"><span>◷</span><div><strong>Open every day</strong><small>10:00 AM – 10:00 PM</small></div></div><a class="text-link" href="https://www.openstreetmap.org/?mlat=14.5995&mlon=120.9842#map=14/14.5995/120.9842" target="_blank" rel="noreferrer">View shop area ↗</a></div></div>
+  <section class="section-pad" id="track"><div class="container" id="track-order"><div class="row g-4 align-items-stretch">
+    <div class="col-lg-7"><div class="track-card h-100" data-reveal><div class="eyebrow">NO “WHERE’S MY FOOD?” MOMENTS</div><h2>Know where your order is.</h2><p>Enter your order ID to see the latest kitchen or rider update.</p><form class="input-group track-form" id="track-form"><input class="form-control" id="track-id" placeholder="e.g. RM-A1B2C3D4" maxlength="24" required><button class="btn btn-warm" type="submit">Track order</button></form><div class="track-result mt-3" id="track-result" aria-live="polite"></div></div></div>
+    <div class="col-lg-5"><div class="store-card h-100" data-reveal="fade-left"><div class="eyebrow">COME SAY HI</div><h3>Your local rice stop.</h3><p>Freshly cooked Filipino favorites, ready for pickup or delivery around Manila.</p><div class="store-detail"><span>⌖</span><div><strong>Manila, Philippines</strong><small>Rice Mo’To Kitchen</small></div></div><div class="store-detail"><span>◷</span><div><strong>Open every day</strong><small>10:00 AM – 10:00 PM</small></div></div><a class="text-link" href="https://www.openstreetmap.org/?mlat=14.5995&mlon=120.9842#map=14/14.5995/120.9842" target="_blank" rel="noreferrer">View shop area ↗</a></div></div>
   </div></div></section>
 
   <section class="dashboard-section section-pad d-none" id="dashboard"><div class="container">
@@ -120,8 +143,10 @@ $user = current_user();
 
 <div class="modal fade" id="manual-order-modal" tabindex="-1" aria-hidden="true"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">In-store / phone order</h5><button class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div><div class="modal-body"><div class="alert alert-danger d-none" id="manual-error"></div><form id="manual-form" class="row g-3"><div class="col-md-6"><label class="form-label">Customer name</label><input class="form-control" name="customer_name" required></div><div class="col-md-6"><label class="form-label">Phone</label><input class="form-control" name="customer_phone"></div><div class="col-md-6"><label class="form-label">Order type</label><select class="form-select" name="order_type"><option value="takeout">Takeout</option><option value="delivery">Delivery</option></select></div><div class="col-md-6"><label class="form-label">Payment</label><select class="form-select" name="payment_method"><option value="cash">Cash</option><option value="online">Online sandbox</option></select></div><div class="col-md-8"><label class="form-label">Delivery address (delivery only)</label><input class="form-control" name="delivery_address"></div><div class="col-md-4"><label class="form-label">Estimated distance (km)</label><input class="form-control" name="distance_km" type="number" min=".1" max="50" step=".1" placeholder="Delivery only"></div><div class="col-12"><label class="form-label">Items</label><div id="manual-items" class="row g-2"></div></div><div class="col-12"><button class="btn btn-warm w-100">Create order & deduct stock</button></div></form></div></div></div></div>
 
+</div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="assets/app.js" defer></script>
+<script src="assets/js/animations.js" defer></script>
 </body>
 </html>

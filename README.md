@@ -34,3 +34,6 @@ Change demo passwords and configure HTTPS and secure database credentials before
 - `api.php` — JSON endpoints for auth, menu, ordering, status, inventory, analytics, chatbot, and owner management.
 - `index.php` — responsive public storefront and role dashboards.
 - `assets/app.js` / `assets/app.css` — cart, checkout/map, dashboard interactions, and responsive presentation.
+- `assets/css/animations.css` / `assets/js/animations.js` — accessible scroll reveals, the menu ribbon and featured showcase motion, and reduced-motion handling. They are loaded by `index.php`; the animation script observes newly rendered menu cards, so the existing category filters and cart actions remain unchanged.
+
+The storefront currently lives in `index.php` (there is no separate `home.php`). To reuse the motion layer on another page, load `assets/css/animations.css` after the page styles and `assets/js/animations.js` with `defer` after its main content. Add `data-reveal` to elements that should enter on scroll, `data-reveal="fade-left"` for a lateral entrance, `data-reveal-stagger` to a parent row, and `data-parallax` to cropped images. Direct hash links reveal their target content immediately, and reduced-motion preferences disable the effects.
