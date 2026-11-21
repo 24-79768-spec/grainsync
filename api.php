@@ -57,10 +57,18 @@ try {
             require_csrf();
             $user = current_user();
             if ($user) {
-                log_activity($pdo, (int)$user['id'], 'logout', 'Signed out');
+                try {
+                    log_activity($pdo, (int)$user['id'], 'logout', 'Signed out');
+                } catch (Throwable $exception) {
+                    error_log('Rice Moto logout activity log: ' . $exception->getMessage());
+                }
             }
             $_SESSION = [];
             session_destroy();
+            if (ini_get('session.use_cookies')) {
+                $params = session_get_cookie_params();
+                setcookie(session_name(), '', time() - 42000, $params['path'], $params['domain'], $params['secure'], $params['httponly']);
+            }
             json_response(['ok' => true]);
 
         case 'order_status':

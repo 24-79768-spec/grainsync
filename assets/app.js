@@ -312,7 +312,7 @@
     try{const result=await request(mode==='register'?'register':'login',Object.fromEntries(new FormData(form)));user=result.user;csrf=result.csrf;bootstrap.Modal.getOrCreateInstance($('#auth-modal')).hide();location.reload();}
     catch(error){showError($('#auth-error'),error);}
   });
-  $('#logout-button')?.addEventListener('click',async()=>{try{await request('logout',{});location.reload();}catch(error){alert(error.message);}});
+  $('#logout-button')?.addEventListener('click',async()=>{try{await request('logout',{});}catch(error){console.error('Logout request failed:',error);}finally{location.reload();}});
   $$('#mainNav a').forEach(link=>link.addEventListener('click',()=>{
     if(window.matchMedia('(max-width: 767.98px)').matches)bootstrap.Collapse.getOrCreateInstance($('#mainNav')).hide();
   }));
